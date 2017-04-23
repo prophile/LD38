@@ -110,10 +110,10 @@ public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
 
     public static int locToSlice(double x, double y) {
         double sliceF = y - x*THAT_THING;
-        return (int)(sliceF + 0.5);
+        return (int)Math.floor(sliceF + 0.5);
     }
 
     public static int locToColumn(double x, double y) {
-        return (int)(x + 0.5);
+        return (int)Math.floor(x + 0.5);
     }
 }
