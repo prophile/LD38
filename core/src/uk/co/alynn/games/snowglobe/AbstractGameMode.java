@@ -6,6 +6,10 @@ public class AbstractGameMode implements GameMode {
     }
 
     @Override
+    public void render() {
+    }
+
+    @Override
     public void preActivate() {
     }
 
