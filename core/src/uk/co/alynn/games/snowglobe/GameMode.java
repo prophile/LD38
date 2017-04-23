@@ -4,7 +4,7 @@ public interface GameMode {
     void tick(double dt);
 
     void preActivate();
-    void postActive();
+    void postActivate();
     void preDeactivate();
     void postDeactivate();
 }

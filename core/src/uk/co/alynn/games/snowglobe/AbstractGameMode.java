@@ -10,7 +10,7 @@ public class AbstractGameMode implements GameMode {
     }
 
     @Override
-    public void postActive() {
+    public void postActivate() {
     }
 
     @Override
