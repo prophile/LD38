@@ -25,7 +25,7 @@ public class MainGameMode extends AbstractGameMode {
     private final int initialValue = 8;
     private final int combatCost = 2;
     private final int gridSize = 4;
-    private final double initialFlakeRate = 20.0;
+    private final double initialFlakeRate = 10.0;
     private final double flakeRateHalfLife = 10.0;
     private final double initialEraseRate = 2.0;
     private final double eraseRateHalfLife = 10.0;
@@ -151,22 +151,22 @@ public class MainGameMode extends AbstractGameMode {
         time += dt;
         double currentEraseRate = initialEraseRate + Math.pow(2.0, -(time/ eraseRateHalfLife));
         int numErase = Utils.randomPoisson(currentEraseRate * dt, rng);
-        for (int i = 0; i < numErase; i++){
+        for (int i = 0; i < numErase; i++) {
             // determine tile radius where tile is to be erased,
             // with preference for larger radii
             int radius = getCubeRand();
             // get all tiles at this radius
             ArrayList<HexGrid.Entry<Tile>> radiusTiles = new ArrayList<HexGrid.Entry<Tile>>();
-            for (HexGrid.Entry<Tile> entry: tiles) {
-                if(HexGrid.distance(0,0, entry.slice, entry.column) == radius){
+            for (HexGrid.Entry<Tile> entry : tiles) {
+                if (HexGrid.distance(0, 0, entry.slice, entry.column) == radius) {
                     radiusTiles.add(entry);
                 }
             }
-            if(!radiusTiles.isEmpty()){
+            if (!radiusTiles.isEmpty()) {
                 int eraseIdx = rng.nextInt(radiusTiles.size());
                 tiles.set(radiusTiles.get(eraseIdx).slice, radiusTiles.get(eraseIdx).column, null);
-                System.err.println("erasing slice " + radiusTiles.get(eraseIdx).slice + " column " + radiusTiles.get(eraseIdx).column);            }
-
+                System.err.println("erasing slice " + radiusTiles.get(eraseIdx).slice + " column " + radiusTiles.get(eraseIdx).column);
+            }
         }
 
         double currentFlakeRate = initialFlakeRate * Math.pow(2.0, -(time / flakeRateHalfLife));
