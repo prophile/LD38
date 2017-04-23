@@ -9,7 +9,8 @@ public enum SFX {
     UNSELECT("unselect", 0.4f),
     CAPTURE("capture", 0.4f, 0.2f),
     TRANSFER("transfer", 0.4f, 0.2f),
-    MEEPMERP("meepmerp", 0.4f);
+    MEEPMERP("meepmerp", 0.4f),
+    SKIP("skip", 0.3f);
 
     SFX(String slug) {
         this(slug, 1.0f, 0.0f);

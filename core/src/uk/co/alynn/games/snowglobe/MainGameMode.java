@@ -293,6 +293,7 @@ public class MainGameMode extends AbstractGameMode {
     }
 
     private void waitAction() {
+        SFX.SKIP.play();
         swapTurn();
     }
 
@@ -314,6 +315,7 @@ public class MainGameMode extends AbstractGameMode {
             }
         }
 
+
         boolean isPreparedToTransfer = rng.nextDouble() < 0.3;
 
         if (candidateSources.isEmpty()) {
@@ -321,12 +323,19 @@ public class MainGameMode extends AbstractGameMode {
             return;
         }
 
+        if (candidateSources.size() < 4) {
+            if (rng.nextDouble() < 0.01) {
+                waitAction();
+                return;
+            }
+        }
+
         int index = rng.nextInt(candidateSources.size());
         HexGrid.Entry<Tile> source = candidateSources.get(index);
 
         List<HexGrid.Entry<Tile>> candidateTargets = new ArrayList<HexGrid.Entry<Tile>>();
         for (HexGrid.Entry<Tile> entry : tiles) {
-            if ((entry.value.owner != player || isPreparedToTransfer) && HexGrid.isAdjacent(source.slice, source.column, entry.slice, entry.column)) {
+            if ((entry.value.owner != player || isPreparedToTransfer) && entry.value.value <= source.value.value && HexGrid.isAdjacent(source.slice, source.column, entry.slice, entry.column)) {
                 candidateTargets.add(entry);
             }
         }
