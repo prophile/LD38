@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
-    //private static final double THAT_THING = 0.8660254037844386;
-    private static final double THAT_THING = 0.5;
+    private static final double SIN_60_DEGREES = 0.8660254037844386;
+    private static final double SIN_30_DEGREES = 0.5;
 
     @Override
     public Iterator<Entry<T>> iterator() {
@@ -101,15 +101,15 @@ public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
     }
 
     public static double hexToX(int slice, int column) {
-        return (double)column;
+        return (double)column * SIN_60_DEGREES;
     }
 
     public static double hexToY(int slice, int column) {
-        return (double)slice + THAT_THING*(double)column;
+        return (double)slice + SIN_30_DEGREES * (double)column;
     }
 
     public static int locToSlice(double x, double y) {
-        double sliceF = y - x*THAT_THING;
+        double sliceF = y - x* SIN_30_DEGREES;
         return (int)Math.floor(sliceF + 0.5);
     }
 
