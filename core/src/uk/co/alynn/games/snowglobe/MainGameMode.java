@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.security.acl.Owner;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class MainGameMode extends AbstractGameMode {
     private ShapeRenderer renderer;
@@ -13,6 +15,10 @@ public class MainGameMode extends AbstractGameMode {
 
     private int selectedSlice = -100, selectedColumn = -100;
     private OrthographicCamera orthographicCamera;
+    private final double initialFlakeRate = 10.0;
+    private final double flakeRateHalfLife = 10.0;
+    private double time = 0.0;
+    private final Random rng = new Random();
 
     @Override
     protected Viewport createViewport() {
@@ -67,7 +73,19 @@ public class MainGameMode extends AbstractGameMode {
                     renderer.setColor(0.0f, 0.3f, 1.0f, 1.0f);
                     break;
                 case NEUTRAL:
-                    renderer.setColor(0.7f, 0.7f, 0.7f, 1.0f);
+                    if (entry.value.value < 1) {
+                        renderer.setColor(0.5f, 0.5f, 0.5f, 1.0f);
+                    } else if (entry.value.value < 3) {
+                        renderer.setColor(0.6f, 0.6f, 0.6f, 1.0f);
+                    } else if (entry.value.value < 5) {
+                        renderer.setColor(0.7f, 0.7f, 0.7f, 1.0f);
+                    } else if (entry.value.value < 5) {
+                        renderer.setColor(0.8f, 0.8f, 0.8f, 1.0f);
+                    } else if (entry.value.value < 8) {
+                        renderer.setColor(0.9f, 0.9f, 0.9f, 1.0f);
+                    } else {
+                        renderer.setColor(1, 1, 1, 1.0f);
+                    }
                     break;
             }
             if (entry.slice == selectedSlice && entry.column == selectedColumn) {
@@ -76,6 +94,25 @@ public class MainGameMode extends AbstractGameMode {
             drawHex(entry.slice, entry.column);
         }
         renderer.end();
+    }
+
+    @Override
+    public GameMode tick(double dt) {
+        time += dt;
+        double currentFlakeRate = initialFlakeRate * Math.pow(2.0, -(time / flakeRateHalfLife));
+        int numFlakes = Utils.randomPoisson(currentFlakeRate * dt, rng);
+        ArrayList<Tile> workingTiles = new ArrayList<Tile>();
+        for (HexGrid.Entry<Tile> entry : tiles) {
+            workingTiles.add(entry.value);
+        }
+        for (int i = 0; i < numFlakes; ++i) {
+            // pick a tile at random
+            int tileIndex = rng.nextInt(workingTiles.size());
+            workingTiles.get(tileIndex).value += 1;
+            System.out.println(workingTiles.get(tileIndex).value);
+        }
+
+        return this;
     }
 
     private void drawHex(int slice, int column) {

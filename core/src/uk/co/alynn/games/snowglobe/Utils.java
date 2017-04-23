@@ -13,11 +13,11 @@ public abstract class Utils {
         // from Knuth
         double L = Math.exp(-lambda);
         int k = 0;
-        int p = 1;
+        double p = 1.0;
 
         do {
             ++k;
-            p *= Math.random();
+            p *= random.nextDouble();
         } while (p > L);
 
         return k - 1;
