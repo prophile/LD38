@@ -34,6 +34,7 @@ public class LoaderGameMode extends AbstractGameMode {
 
         if (finishedLoading) {
             // Do something smart here to move to the actual game
+            return new MainGameMode();
         }
 
         return this;
