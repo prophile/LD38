@@ -52,7 +52,7 @@ public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
 
         @Override
         public int hashCode() {
-            return Integer.hashCode(slice) + column;
+            return (new Integer(slice).hashCode() + column);
         }
     }
 
@@ -108,12 +108,40 @@ public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
         return (double)slice + SIN_30_DEGREES * (double)column;
     }
 
+    public static double xyDistanceFromHex(double x, double y, int s2, int c2) {
+        // return distance between xy position and slice column positions
+        // in xy coordinate system
+        return (double) Math.hypot(x - hexToX(s2, c2), y - hexToY(s2, c2));
+
+    }
+    public static Coord xyToHex(double x, double y) {
+        // calculate Hex position from XY position
+        // by finding the nearest four centres of the hex grid and
+        // returning the grid entry with the smallest xy distance between centre of grid and the point
+        int sliceMin = (int) Math.floor(y - x * SIN_30_DEGREES);
+        int columnMin = (int) Math.floor (x);
+        int slice = sliceMin;
+        int column = columnMin;
+        int columns[] = {columnMin, columnMin + 1};
+        int slices[] = {sliceMin, sliceMin + 1};
+        for (int c: columns){
+            for (int s: slices){
+                if (xyDistanceFromHex(x, y, s, c) < xyDistanceFromHex(x, y, slice, column)) {
+                    slice = s;
+                    column = c;
+                }
+            }
+        }
+        System.err.println("picking from sliceMin " + sliceMin + " column Min" + columnMin);
+        return new Coord(slice, column);
+    }
+
     public static int locToSlice(double x, double y) {
-        double sliceF = y - x* SIN_30_DEGREES;
-        return (int)Math.floor(sliceF + 0.5);
+        return xyToHex(x, y).slice;
     }
 
     public static int locToColumn(double x, double y) {
-        return (int)Math.floor(x + 0.5);
+        return xyToHex(x, y).column;
     }
+
 }
