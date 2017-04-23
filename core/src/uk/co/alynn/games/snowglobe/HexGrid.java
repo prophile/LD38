@@ -132,7 +132,6 @@ public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
                 }
             }
         }
-        System.err.println("picking from sliceMin " + sliceMin + " column Min" + columnMin);
         return new Coord(slice, column);
     }
 
