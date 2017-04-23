@@ -22,6 +22,7 @@ public class Overlord {
         s_instance = new Overlord();
 
         s_instance.initSprites();
+        s_instance.initScreens();
         s_instance.initFont();
     }
     private Overlord() {
@@ -36,6 +37,17 @@ public class Overlord {
         params.magFilter = Texture.TextureFilter.MipMapLinearLinear;
 
         assetManager.load("badlogic.jpg", Texture.class, params);
+    }
+
+    private void initScreens() {
+        TextureLoader.TextureParameter params = new TextureLoader.TextureParameter();
+        params.genMipMaps = false;
+        params.minFilter = Texture.TextureFilter.Nearest;
+        params.magFilter = Texture.TextureFilter.Nearest;
+
+        assetManager.load("gs_win.png", Texture.class, params);
+        assetManager.load("gs_lose.png", Texture.class, params);
+        assetManager.load("gs_intro.png", Texture.class, params);
     }
 
     private void initFont() {
