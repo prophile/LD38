@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -107,17 +108,21 @@ public class MainGameMode extends AbstractGameMode {
         }
         renderer.end();
 
+        batch.begin();
+        drawText(3.0f, -2.5f, "bees", true);
+        batch.end();
+    }
+
+    private void drawText(float x, float y, String text, boolean center) {
         Matrix4 trans = new Matrix4();
-        trans.translate(2.0f, -2.5f, 0.0f);
+        trans.translate(x, y, 0.0f);
         trans.scale(0.01f, 0.01f, 1.0f);
         batch.setTransformMatrix(trans);
-        batch.begin();
         batch.setShader(Overlord.s_instance.fontShader);
         BitmapFont fnt = Overlord.s_instance.assetManager.get("bitstream.fnt", BitmapFont.class);
         fnt.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        fnt.draw(batch, "covered in bees", 0, 0);
+        fnt.draw(batch, text, 0f, 0f, 0.0f, center ? Align.center : Align.left, true);
         batch.setShader(null);
-        batch.end();
     }
 
     @Override
