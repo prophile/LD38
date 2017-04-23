@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Snowglobe extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -19,6 +20,7 @@ public class Snowglobe extends ApplicationAdapter {
 		newGameMode.preActivate();
 		oldGameMode.preDeactivate();
 		gameMode = newGameMode;
+		gameMode.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		newGameMode.postActivate();
 		oldGameMode.postDeactivate();
 	}
@@ -29,18 +31,27 @@ public class Snowglobe extends ApplicationAdapter {
 
 		// set up initial game mode
 		gameMode.preActivate();
+        gameMode.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
 
 	@Override
 	public void render () {
 		double dt = Gdx.graphics.getDeltaTime();
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClearColor(0.0f, 0, 0.0f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		GameMode newGameMode = gameMode.tick(dt);
 		if (newGameMode != gameMode) {
 			setGameMode(newGameMode);
 		}
+        Viewport viewport = gameMode.getViewport();
+        viewport.getCamera().update();
+        viewport.apply();
 		gameMode.render();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		gameMode.getViewport().update(width, height, true);
 	}
 }
