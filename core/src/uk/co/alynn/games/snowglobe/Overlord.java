@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.assets.loaders.TextureLoader;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -24,7 +25,15 @@ public class Overlord {
         s_instance.initSprites();
         s_instance.initScreens();
         s_instance.initFont();
+        s_instance.initSFX();
     }
+
+    private void initSFX() {
+        for (SFX fx : SFX.values()) {
+            assetManager.load(fx.getFilename(), Sound.class);
+        }
+    }
+
     private Overlord() {
         assetManager = new AssetManager();
         fontShader = new ShaderProgram(Gdx.files.internal("text.vert"), Gdx.files.internal("text.frag"));

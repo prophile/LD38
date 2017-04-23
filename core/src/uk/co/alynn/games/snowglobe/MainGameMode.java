@@ -217,12 +217,19 @@ public class MainGameMode extends AbstractGameMode {
 
         if (isOutsideWorld(targetSlice, targetColumn) || !hasSelection()) {
             // select or deselect
+            if (hasSelection()) {
+                SFX.UNSELECT.play();
+            } else {
+                SFX.SELECT.play();
+            }
             selectedSlice = targetSlice;
             selectedColumn = targetColumn;
         } else {
             // action
             if (HexGrid.isAdjacent(selectedSlice, selectedColumn, targetSlice, targetColumn)) {
                 moveAction(selectedSlice, selectedColumn, targetSlice, targetColumn);
+            } else {
+                SFX.MEEPMERP.play();
             }
             selectedColumn = -1000;
             selectedSlice = -1000;
@@ -236,6 +243,7 @@ public class MainGameMode extends AbstractGameMode {
         Tile fromCell = tiles.get(selectedSlice, selectedColumn);
         Tile toCell = tiles.get(targetSlice, targetColumn);
         if (fromCell.owner != turn) {
+            SFX.MEEPMERP.play();
             return;
         }
 
@@ -244,10 +252,12 @@ public class MainGameMode extends AbstractGameMode {
                 ++toCell.value;
                 --fromCell.value;
                 swapTurn();
+                SFX.TRANSFER.play();
             }
             return;
         } else if (toCell.owner == Ownership.NEUTRAL) {
             if (toCell.value >= fromCell.value) {
+                SFX.MEEPMERP.play();
                 return;
             }
 
@@ -256,9 +266,11 @@ public class MainGameMode extends AbstractGameMode {
             fromCell.value = tmpValue;
 
             toCell.owner = fromCell.owner;
+            SFX.CAPTURE.play();
             swapTurn();
         } else {
             if (fromCell.value < toCell.value + combatCost) {
+                SFX.MEEPMERP.play();
                 return;
             }
 
@@ -269,6 +281,7 @@ public class MainGameMode extends AbstractGameMode {
             fromCell.value = tmpValue;
 
             toCell.owner = fromCell.owner;
+            SFX.CAPTURE.play();
             swapTurn();
         }
     }
