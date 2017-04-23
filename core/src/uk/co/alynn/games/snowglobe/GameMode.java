@@ -1,7 +1,7 @@
 package uk.co.alynn.games.snowglobe;
 
 public interface GameMode {
-    void tick(double dt);
+    GameMode tick(double dt);
     void render();
 
     void preActivate();

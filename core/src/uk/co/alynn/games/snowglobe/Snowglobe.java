@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class Snowglobe extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-	private GameMode gameMode = new InitialGameMode();
+	private GameMode gameMode = new LoaderGameMode();
 
 	public void setGameMode(GameMode newGameMode) {
 		if (newGameMode == gameMode) {
@@ -37,7 +37,10 @@ public class Snowglobe extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		gameMode.tick(dt);
+		GameMode newGameMode = gameMode.tick(dt);
+		if (newGameMode != gameMode) {
+			setGameMode(newGameMode);
+		}
 		gameMode.render();
 	}
 }
