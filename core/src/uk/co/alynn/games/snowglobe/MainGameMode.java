@@ -207,6 +207,12 @@ public class MainGameMode extends AbstractGameMode {
         cr.receive(fx - hpxo, fy - hpyo, fx - halfWidth, fy, fx, fy);
     }
 
+    private void nope() {
+        if (turn == Ownership.RED) {
+            SFX.MEEPMERP.play();
+        }
+    }
+
     @Override
     public void click(float x, float y) {
         int targetColumn = HexGrid.locToColumn(x, y);
@@ -229,7 +235,7 @@ public class MainGameMode extends AbstractGameMode {
             if (HexGrid.isAdjacent(selectedSlice, selectedColumn, targetSlice, targetColumn)) {
                 moveAction(selectedSlice, selectedColumn, targetSlice, targetColumn);
             } else {
-                SFX.MEEPMERP.play();
+                nope();
             }
             selectedColumn = -1000;
             selectedSlice = -1000;
@@ -243,7 +249,7 @@ public class MainGameMode extends AbstractGameMode {
         Tile fromCell = tiles.get(selectedSlice, selectedColumn);
         Tile toCell = tiles.get(targetSlice, targetColumn);
         if (fromCell.owner != turn) {
-            SFX.MEEPMERP.play();
+            nope();
             return;
         }
 
@@ -257,7 +263,7 @@ public class MainGameMode extends AbstractGameMode {
             return;
         } else if (toCell.owner == Ownership.NEUTRAL) {
             if (toCell.value >= fromCell.value) {
-                SFX.MEEPMERP.play();
+                nope();
                 return;
             }
 
@@ -270,7 +276,7 @@ public class MainGameMode extends AbstractGameMode {
             swapTurn();
         } else {
             if (fromCell.value < toCell.value + combatCost) {
-                SFX.MEEPMERP.play();
+                nope();
                 return;
             }
 
