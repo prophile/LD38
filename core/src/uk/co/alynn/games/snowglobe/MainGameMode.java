@@ -13,19 +13,26 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.security.acl.Owner;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainGameMode extends AbstractGameMode {
+    public static final double AI_THINKING_TIME = 2.5;
     private ShapeRenderer renderer;
     private SpriteBatch batch;
     private HexGrid<Tile> tiles;
 
     private int selectedSlice = -100, selectedColumn = -100;
     private OrthographicCamera orthographicCamera;
-    private final double initialFlakeRate = 10.0;
+    private final double initialFlakeRate = 20.0;
     private final double flakeRateHalfLife = 10.0;
+    private final int initialValue = 8;
+    private final int combatCost = 2;
     private double time = 0.0;
     private final Random rng = new Random();
+
+    private Ownership turn = Ownership.RED;
+    private double blueThinkingTime = 0.0;
 
     @Override
     protected Viewport createViewport() {
@@ -51,11 +58,11 @@ public class MainGameMode extends AbstractGameMode {
                 Tile tile = new Tile();
                 if (i == 2 && j == 1) {
                     tile.owner = Ownership.RED;
-                    tile.value = 5;
+                    tile.value = initialValue;
                 }
                 if (i == -2 && j == -1) {
                     tile.owner = Ownership.BLUE;
-                    tile.value = 5;
+                    tile.value = initialValue;
                 }
                 tiles.set(i, j, tile);
             }
@@ -153,6 +160,11 @@ public class MainGameMode extends AbstractGameMode {
             System.out.println(workingTiles.get(tileIndex).value);
         }
 
+        blueThinkingTime -= dt;
+        if (blueThinkingTime < 0.0 && turn == Ownership.BLUE) {
+            doAITurn(Ownership.BLUE);
+        }
+
         return this;
     }
 
@@ -220,6 +232,97 @@ public class MainGameMode extends AbstractGameMode {
 
     private void moveAction(int selectedSlice, int selectedColumn, int targetSlice, int targetColumn) {
         System.err.println("MOVE " + selectedColumn + "/" + selectedColumn + " => " + targetSlice + "/" + targetColumn);
+
+        Tile fromCell = tiles.get(selectedSlice, selectedColumn);
+        Tile toCell = tiles.get(targetSlice, targetColumn);
+        if (fromCell.owner != turn) {
+            return;
+        }
+
+        if (toCell.owner == fromCell.owner) {
+            if (fromCell.value > 0) {
+                ++toCell.value;
+                --fromCell.value;
+                swapTurn();
+            }
+            return;
+        } else if (toCell.owner == Ownership.NEUTRAL) {
+            if (toCell.value >= fromCell.value) {
+                return;
+            }
+
+            int tmpValue = toCell.value;
+            toCell.value = fromCell.value;
+            fromCell.value = tmpValue;
+
+            toCell.owner = fromCell.owner;
+            swapTurn();
+        } else {
+            if (fromCell.value < toCell.value + combatCost) {
+                return;
+            }
+
+            fromCell.value -= combatCost;
+
+            int tmpValue = toCell.value;
+            toCell.value = fromCell.value;
+            fromCell.value = tmpValue;
+
+            toCell.owner = fromCell.owner;
+            swapTurn();
+        }
+    }
+
+    private void waitAction() {
+        swapTurn();
+    }
+
+    private void swapTurn() {
+        if (turn == Ownership.RED) {
+            turn = Ownership.BLUE;
+            blueThinkingTime = Math.abs(rng.nextGaussian() * AI_THINKING_TIME);
+        } else {
+            turn = Ownership.RED;
+        }
+    }
+
+    private void doAITurn(Ownership player) {
+        // really smart AI: pick a blue cell at random, then a target at random
+        List<HexGrid.Entry<Tile>> candidateSources = new ArrayList<HexGrid.Entry<Tile>>();
+        for (HexGrid.Entry<Tile> entry : tiles) {
+            if (entry.value.owner == player) {
+                candidateSources.add(entry);
+            }
+        }
+
+        boolean isPreparedToTransfer = rng.nextDouble() < 0.3;
+
+        if (candidateSources.isEmpty()) {
+            waitAction();
+            return;
+        }
+
+        int index = rng.nextInt(candidateSources.size());
+        HexGrid.Entry<Tile> source = candidateSources.get(index);
+
+        List<HexGrid.Entry<Tile>> candidateTargets = new ArrayList<HexGrid.Entry<Tile>>();
+        for (HexGrid.Entry<Tile> entry : tiles) {
+            if ((entry.value.owner != player || isPreparedToTransfer) && HexGrid.isAdjacent(source.slice, source.column, entry.slice, entry.column)) {
+                candidateTargets.add(entry);
+            }
+        }
+
+        if (candidateTargets.isEmpty()) {
+            if (rng.nextDouble() < 0.05) {
+                waitAction();
+            }
+            return;
+        }
+
+        index = rng.nextInt(candidateTargets.size());
+        HexGrid.Entry<Tile> target = candidateTargets.get(index);
+
+        moveAction(source.slice, source.column, target.slice, target.column);
     }
 
     private boolean hasSelection() {
