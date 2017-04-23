@@ -1,7 +1,10 @@
 package uk.co.alynn.games.snowglobe;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -11,6 +14,7 @@ import java.util.Random;
 
 public class MainGameMode extends AbstractGameMode {
     private ShapeRenderer renderer;
+    private SpriteBatch batch;
     private HexGrid<Tile> tiles;
 
     private int selectedSlice = -100, selectedColumn = -100;
@@ -31,6 +35,7 @@ public class MainGameMode extends AbstractGameMode {
     @Override
     public void preActivate() {
         renderer = new ShapeRenderer();
+        batch = new SpriteBatch();
         tiles = new HexGrid<Tile>();
         initGrid();
     }
@@ -56,13 +61,20 @@ public class MainGameMode extends AbstractGameMode {
     public void postDeactivate() {
         renderer.dispose();
         renderer = null;
+        batch.dispose();
+        batch = null;
         tiles = null;
     }
+
+    private final Matrix4 IDENTITY4 = new Matrix4();
 
     @Override
     public void render() {
         orthographicCamera.update();
         renderer.setProjectionMatrix(orthographicCamera.combined);
+        batch.setProjectionMatrix(orthographicCamera.combined);
+        batch.setTransformMatrix(IDENTITY4);
+
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         for (HexGrid.Entry<Tile> entry : tiles) {
             switch (entry.value.owner) {
@@ -94,6 +106,17 @@ public class MainGameMode extends AbstractGameMode {
             drawHex(entry.slice, entry.column);
         }
         renderer.end();
+
+        Matrix4 trans = new Matrix4();
+        trans.scale(0.01f, 0.01f, 1.0f);
+        batch.setTransformMatrix(trans);
+        batch.begin();
+        batch.setShader(Overlord.s_instance.fontShader);
+        BitmapFont fnt = Overlord.s_instance.assetManager.get("bitstream.fnt", BitmapFont.class);
+        fnt.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        fnt.draw(batch, "covered in bees", 0, 0);
+        batch.setShader(null);
+        batch.end();
     }
 
     @Override
