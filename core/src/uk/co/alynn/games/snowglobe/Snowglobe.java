@@ -101,6 +101,6 @@ public class Snowglobe extends ApplicationAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-		gameMode.getViewport().update(width, height, true);
+		gameMode.getViewport().update(width, height, gameMode.usesCenteredCamera());
 	}
 }

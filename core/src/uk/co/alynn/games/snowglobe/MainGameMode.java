@@ -1,6 +1,9 @@
 package uk.co.alynn.games.snowglobe;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.security.acl.Owner;
 
@@ -9,6 +12,15 @@ public class MainGameMode extends AbstractGameMode {
     private HexGrid<Tile> tiles;
 
     private int selectedSlice = -100, selectedColumn = -100;
+    private OrthographicCamera orthographicCamera;
+
+    @Override
+    protected Viewport createViewport() {
+        orthographicCamera = new OrthographicCamera(10.24f, 6.4f);
+        Viewport fixedPort = new FitViewport(orthographicCamera.viewportWidth, orthographicCamera.viewportHeight, orthographicCamera);
+        System.err.print("BEES");
+        return fixedPort;
+    }
 
     @Override
     public void preActivate() {
@@ -38,6 +50,8 @@ public class MainGameMode extends AbstractGameMode {
 
     @Override
     public void render() {
+        orthographicCamera.update();
+        renderer.setProjectionMatrix(orthographicCamera.combined);
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         for (HexGrid.Entry<Tile> entry : tiles) {
             switch (entry.value.owner) {
@@ -62,12 +76,8 @@ public class MainGameMode extends AbstractGameMode {
     private void drawHex(int slice, int column) {
         double x = HexGrid.hexToX(slice, column);
         double y = HexGrid.hexToY(slice, column);
-        //renderer.circle(((float)x + 1.0f) * 100.0f, ((float)y + 1.0f) * 100.0f, 40.0f);
-        // hack
-        x = 100.0 * (x + 1.0);
-        y = 100.0 * (y + 1.0);
 
-        float width = 100.0f;
+        float width = 1.0f;
         float halfWidth = width / 2.0f;
 
         float fx = (float)x;
@@ -86,13 +96,13 @@ public class MainGameMode extends AbstractGameMode {
 
     @Override
     public void click(float x, float y) {
-        // hacky unmunge
-        x /= 100.0f;
-        x -= 1.0f;
-        y /= 100.0f;
-        y -= 1.0f;
         selectedColumn = HexGrid.locToColumn(x, y);
         selectedSlice = HexGrid.locToSlice(x, y);
         System.err.println("SELECT " + selectedSlice + "/" + selectedColumn + " from " + x + ", " + y);
+    }
+
+    @Override
+    public boolean usesCenteredCamera() {
+        return false;
     }
 }

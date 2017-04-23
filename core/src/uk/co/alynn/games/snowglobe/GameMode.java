@@ -14,4 +14,5 @@ public interface GameMode {
     Viewport getViewport();
 
     void click(float x, float y);
+    boolean usesCenteredCamera();
 }

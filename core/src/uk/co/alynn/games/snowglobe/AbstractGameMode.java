@@ -49,4 +49,9 @@ public abstract class AbstractGameMode implements GameMode {
     public void click(float x, float y) {
 
     }
+
+    @Override
+    public boolean usesCenteredCamera() {
+        return true;
+    }
 }
