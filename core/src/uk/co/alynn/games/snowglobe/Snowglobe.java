@@ -12,6 +12,7 @@ public class Snowglobe extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
+		Overlord.init();
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
 	}
