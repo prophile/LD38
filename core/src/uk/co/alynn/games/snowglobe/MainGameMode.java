@@ -112,7 +112,7 @@ public class MainGameMode extends AbstractGameMode {
         renderer.begin(ShapeRenderer.ShapeType.Line);
         renderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
         Gdx.gl.glLineWidth(3.0f);
-        if (tiles.get(selectedSlice, selectedColumn) != null) {
+        if (hasSelection()) {
             drawHexOutline(selectedSlice, selectedColumn);
         }
         renderer.end();
@@ -197,9 +197,37 @@ public class MainGameMode extends AbstractGameMode {
 
     @Override
     public void click(float x, float y) {
-        selectedColumn = HexGrid.locToColumn(x, y);
-        selectedSlice = HexGrid.locToSlice(x, y);
-        System.err.println("SELECT " + selectedSlice + "/" + selectedColumn + " from " + x + ", " + y);
+        int targetColumn = HexGrid.locToColumn(x, y);
+        int targetSlice = HexGrid.locToSlice(x, y);
+
+        System.err.println("Has sel: " + hasSelection());
+        System.err.println("inbound: " + !isOutsideWorld(targetSlice, targetColumn));
+
+        if (isOutsideWorld(targetSlice, targetColumn) || !hasSelection()) {
+            // select or deselect
+            selectedSlice = targetSlice;
+            selectedColumn = targetColumn;
+        } else {
+            // action
+            if (HexGrid.isAdjacent(selectedSlice, selectedColumn, targetSlice, targetColumn)) {
+                moveAction(selectedSlice, selectedColumn, targetSlice, targetColumn);
+            }
+            selectedColumn = -1000;
+            selectedSlice = -1000;
+        }
+        System.err.println("SELECT " + targetColumn + "/" + targetSlice + " from " + x + ", " + y);
+    }
+
+    private void moveAction(int selectedSlice, int selectedColumn, int targetSlice, int targetColumn) {
+        System.err.println("MOVE " + selectedColumn + "/" + selectedColumn + " => " + targetSlice + "/" + targetColumn);
+    }
+
+    private boolean hasSelection() {
+        return !isOutsideWorld(selectedSlice, selectedColumn);
+    }
+
+    private boolean isOutsideWorld(int slice, int column) {
+        return tiles.get(slice, column) == null;
     }
 
     @Override
