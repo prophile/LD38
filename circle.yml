@@ -7,6 +7,6 @@ test:
   override:
     - gradle dist
   post:
-    - cp desktop/build/lis/desktop-1.0.jar $CIRCLE_ARTIFACTS/snowglobe.jar
+    - cp desktop/build/libs/desktop-1.0.jar $CIRCLE_ARTIFACTS/snowglobe.jar
     - scripts/generate-apps.sh
     - cp distributions/final/* $CIRCLE_ARTIFACTS/
