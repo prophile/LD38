@@ -1,6 +1,5 @@
 package uk.co.alynn.games.snowglobe;
 
-import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 

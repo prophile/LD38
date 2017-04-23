@@ -2,7 +2,6 @@ package uk.co.alynn.games.snowglobe;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader;
 
 public class SingleTextureGameMode extends AbstractGameMode {
     public interface Receiver {
