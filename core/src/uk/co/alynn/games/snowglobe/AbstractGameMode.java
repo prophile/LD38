@@ -1,6 +1,6 @@
 package uk.co.alynn.games.snowglobe;
 
-public class AbstractGameMode implements GameMode {
+public abstract class AbstractGameMode implements GameMode {
     @Override
     public void tick(double dt) {
     }
