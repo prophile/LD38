@@ -108,6 +108,7 @@ public class MainGameMode extends AbstractGameMode {
         renderer.end();
 
         Matrix4 trans = new Matrix4();
+        trans.translate(2.0f, -2.5f, 0.0f);
         trans.scale(0.01f, 0.01f, 1.0f);
         batch.setTransformMatrix(trans);
         batch.begin();
