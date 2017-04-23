@@ -12,4 +12,6 @@ public interface GameMode {
     void postDeactivate();
 
     Viewport getViewport();
+
+    void click(float x, float y);
 }

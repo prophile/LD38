@@ -2,27 +2,59 @@ package uk.co.alynn.games.snowglobe;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.security.acl.Owner;
+
 public class MainGameMode extends AbstractGameMode {
     private ShapeRenderer renderer;
+    private HexGrid<Tile> tiles;
+
+    private int selectedSlice = -100, selectedColumn = -100;
 
     @Override
     public void preActivate() {
         renderer = new ShapeRenderer();
+        tiles = new HexGrid<Tile>();
+        initGrid();
+    }
+
+    private void initGrid() {
+        for (int i = 0; i < 5; ++i) {
+            for (int j = 0; j < 5; ++j) {
+                Tile tile = new Tile();
+                if (i == 2 && j == 4) {
+                    tile.owner = Ownership.RED;
+                }
+                tiles.set(i, j, tile);
+            }
+        }
     }
 
     @Override
     public void postDeactivate() {
         renderer.dispose();
         renderer = null;
+        tiles = null;
     }
 
     @Override
     public void render() {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
-        for (int i = -1; i < 10; ++i) {
-            for (int j = -5; j < 5; ++j) {
-                drawHex(j, i);
+        for (HexGrid.Entry<Tile> entry : tiles) {
+            switch (entry.value.owner) {
+                case RED:
+                    renderer.setColor(1.0f, 0.1f, 0.1f, 1.0f);
+                    break;
+                case BLUE:
+                    renderer.setColor(0.0f, 0.3f, 1.0f, 1.0f);
+                    break;
+                case NEUTRAL:
+                    renderer.setColor(0.7f, 0.7f, 0.7f, 1.0f);
+                    break;
             }
+            if (entry.slice == selectedSlice && entry.column == selectedColumn) {
+                renderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+            drawHex(entry.slice, entry.column);
         }
         renderer.end();
     }
@@ -50,5 +82,17 @@ public class MainGameMode extends AbstractGameMode {
         renderer.triangle(fx + halfWidth, fy, fx + hpxo, fy - hpyo, fx, fy);
         renderer.triangle(fx + hpxo, fy - hpyo, fx - hpxo, fy - hpyo, fx, fy);
         renderer.triangle(fx - hpxo, fy - hpyo, fx - halfWidth, fy, fx, fy);
+    }
+
+    @Override
+    public void click(float x, float y) {
+        // hacky unmunge
+        x /= 100.0f;
+        x -= 1.0f;
+        y /= 100.0f;
+        y -= 1.0f;
+        selectedColumn = HexGrid.locToColumn(x, y);
+        selectedSlice = HexGrid.locToSlice(x, y);
+        System.err.println("SELECT " + selectedSlice + "/" + selectedColumn + " from " + x + ", " + y);
     }
 }

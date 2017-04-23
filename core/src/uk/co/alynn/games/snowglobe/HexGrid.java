@@ -1,11 +1,36 @@
 package uk.co.alynn.games.snowglobe;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-public class HexGrid<T> {
+public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
     //private static final double THAT_THING = 0.8660254037844386;
     private static final double THAT_THING = 0.5;
+
+    @Override
+    public Iterator<Entry<T>> iterator() {
+        final Iterator<Map.Entry<Coord, T>> iter = data.entrySet().iterator();
+        return new Iterator<Entry<T>>() {
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public Entry<T> next() {
+                Map.Entry<Coord, T> kvp = iter.next();
+                if (kvp == null)
+                    return null;
+                return new Entry<T>(kvp.getKey().slice, kvp.getKey().column, kvp.getValue());
+            }
+
+            @Override
+            public void remove() {
+                iter.remove();
+            }
+        };
+    }
 
     private static class Coord {
         public final int slice;
@@ -31,10 +56,22 @@ public class HexGrid<T> {
         }
     }
 
+    public static class Entry<T> {
+        public final int slice;
+        public final int column;
+        public final T value;
+
+        public Entry(int slice, int column, T value) {
+            this.slice = slice;
+            this.column = column;
+            this.value = value;
+        }
+    }
+
     private final Map<Coord, T> data;
 
     @SuppressWarnings("unchecked")
-    public HexGrid(int slices, int columns) {
+    public HexGrid() {
         data = new HashMap<Coord, T>();
     }
 
@@ -69,5 +106,14 @@ public class HexGrid<T> {
 
     public static double hexToY(int slice, int column) {
         return (double)slice + THAT_THING*(double)column;
+    }
+
+    public static int locToSlice(double x, double y) {
+        double sliceF = y - x*THAT_THING;
+        return (int)(sliceF + 0.5);
+    }
+
+    public static int locToColumn(double x, double y) {
+        return (int)(y + 0.5);
     }
 }

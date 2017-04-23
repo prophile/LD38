@@ -44,4 +44,9 @@ public abstract class AbstractGameMode implements GameMode {
     public Viewport getViewport() {
         return viewport;
     }
+
+    @Override
+    public void click(float x, float y) {
+
+    }
 }
