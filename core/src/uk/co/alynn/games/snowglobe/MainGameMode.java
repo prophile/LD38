@@ -1,6 +1,7 @@
 package uk.co.alynn.games.snowglobe;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,6 +20,7 @@ public class MainGameMode extends AbstractGameMode {
     private ShapeRenderer renderer;
     private SpriteBatch batch;
     private HexGrid<Tile> tiles;
+    private SnowParticles particles;
 
     private int selectedSlice = -100, selectedColumn = -100;
     private OrthographicCamera orthographicCamera;
@@ -29,6 +31,7 @@ public class MainGameMode extends AbstractGameMode {
     private final double flakeRateHalfLife = 10.0;
     private final double initialEraseRate = 2.0;
     private final double eraseRateHalfLife = 10.0;
+    private int allTimeHighFlakes = 0;
     private double time = 0.0;
     private final Random rng = new Random();
 
@@ -49,6 +52,7 @@ public class MainGameMode extends AbstractGameMode {
         batch = new SpriteBatch();
         tiles = new HexGrid<Tile>();
         initGrid();
+        particles = new SnowParticles(10000, 3.0f, 20.0f);
     }
 
     private void initGrid() {
@@ -126,11 +130,18 @@ public class MainGameMode extends AbstractGameMode {
         renderer.end();
 
         batch.begin();
-        drawText(3.0f, -2.5f, "bees", true);
+        drawText(3.0f, -2.5f, "Top: " + allTimeHighFlakes, true);
         for (HexGrid.Entry<Tile> entry : tiles) {
             drawText((float)HexGrid.hexToX(entry.slice, entry.column), (float)HexGrid.hexToY(entry.slice, entry.column) - 0.18f, "" + entry.value.value, true);
         }
         batch.end();
+
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        renderer.begin(ShapeRenderer.ShapeType.Point);
+        particles.render(renderer, time);
+        renderer.end();
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private void drawText(float x, float y, String text, boolean center) {
@@ -172,9 +183,20 @@ public class MainGameMode extends AbstractGameMode {
         double currentFlakeRate = initialFlakeRate * Math.pow(2.0, -(time / flakeRateHalfLife));
         int numFlakes = Utils.randomPoisson(currentFlakeRate * dt, rng);
         ArrayList<Tile> workingTiles = new ArrayList<Tile>();
+        int redFlakes = 0;
         for (HexGrid.Entry<Tile> entry : tiles) {
             workingTiles.add(entry.value);
+
+            // While we're iterating through anyway, sum up player tiles
+            if (entry.value.owner == Ownership.RED) {
+                redFlakes += entry.value.value;
+            }
         }
+
+        if (redFlakes > allTimeHighFlakes) {
+            allTimeHighFlakes = redFlakes;
+        }
+
         for (int i = 0; i < numFlakes; ++i) {
             // pick a tile at random
             int tileIndex = rng.nextInt(workingTiles.size());
