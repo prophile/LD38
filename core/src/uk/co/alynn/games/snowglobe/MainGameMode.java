@@ -26,6 +26,7 @@ public class MainGameMode extends AbstractGameMode {
     private final double flakeRateHalfLife = 10.0;
     private final int initialValue = 8;
     private final int combatCost = 2;
+    private int allTimeHighFlakes = 0;
     private double time = 0.0;
     private final Random rng = new Random();
 
@@ -123,7 +124,7 @@ public class MainGameMode extends AbstractGameMode {
         renderer.end();
 
         batch.begin();
-        drawText(3.0f, -2.5f, "bees", true);
+        drawText(3.0f, -2.5f, "Top: " + allTimeHighFlakes, true);
         for (HexGrid.Entry<Tile> entry : tiles) {
             drawText((float)HexGrid.hexToX(entry.slice, entry.column), (float)HexGrid.hexToY(entry.slice, entry.column) - 0.18f, "" + entry.value.value, true);
         }
@@ -148,9 +149,20 @@ public class MainGameMode extends AbstractGameMode {
         double currentFlakeRate = initialFlakeRate * Math.pow(2.0, -(time / flakeRateHalfLife));
         int numFlakes = Utils.randomPoisson(currentFlakeRate * dt, rng);
         ArrayList<Tile> workingTiles = new ArrayList<Tile>();
+        int redFlakes = 0;
         for (HexGrid.Entry<Tile> entry : tiles) {
             workingTiles.add(entry.value);
+
+            // While we're iterating through anyway, sum up player tiles
+            if (entry.value.owner == Ownership.RED) {
+                redFlakes += entry.value.value;
+            }
         }
+
+        if (redFlakes > allTimeHighFlakes) {
+            allTimeHighFlakes = redFlakes;
+        }
+
         for (int i = 0; i < numFlakes; ++i) {
             // pick a tile at random
             int tileIndex = rng.nextInt(workingTiles.size());
