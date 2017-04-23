@@ -36,7 +36,7 @@ public class MainGameMode extends AbstractGameMode {
 
     @Override
     protected Viewport createViewport() {
-        orthographicCamera = new OrthographicCamera(10.24f, 6.4f);
+        orthographicCamera = new OrthographicCamera(16f, 10f);
         Viewport fixedPort = new FitViewport(orthographicCamera.viewportWidth, orthographicCamera.viewportHeight, orthographicCamera);
         System.err.print("BEES");
         return fixedPort;
