@@ -30,11 +30,16 @@ public class MainGameMode extends AbstractGameMode {
     }
 
     private void initGrid() {
-        for (int i = 0; i < 5; ++i) {
-            for (int j = 0; j < 5; ++j) {
+        for (int i = -30; i < 30; ++i) {
+            for (int j = -30; j < 30; ++j) {
+                if (HexGrid.distance(i, j, 0, 0) >= 4)
+                    continue;
                 Tile tile = new Tile();
-                if (i == 2 && j == 4) {
+                if (i == 2 && j == 1) {
                     tile.owner = Ownership.RED;
+                }
+                if (i == -2 && j == -1) {
+                    tile.owner = Ownership.BLUE;
                 }
                 tiles.set(i, j, tile);
             }
