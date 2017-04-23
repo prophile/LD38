@@ -1,6 +1,7 @@
 package uk.co.alynn.games.snowglobe;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,6 +20,7 @@ public class MainGameMode extends AbstractGameMode {
     private ShapeRenderer renderer;
     private SpriteBatch batch;
     private HexGrid<Tile> tiles;
+    private SnowParticles particles;
 
     private int selectedSlice = -100, selectedColumn = -100;
     private OrthographicCamera orthographicCamera;
@@ -47,6 +49,7 @@ public class MainGameMode extends AbstractGameMode {
         batch = new SpriteBatch();
         tiles = new HexGrid<Tile>();
         initGrid();
+        particles = new SnowParticles(10000, 3.0f, 20.0f);
     }
 
     private void initGrid() {
@@ -129,6 +132,13 @@ public class MainGameMode extends AbstractGameMode {
             drawText((float)HexGrid.hexToX(entry.slice, entry.column), (float)HexGrid.hexToY(entry.slice, entry.column) - 0.18f, "" + entry.value.value, true);
         }
         batch.end();
+
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        renderer.begin(ShapeRenderer.ShapeType.Point);
+        particles.render(renderer, time);
+        renderer.end();
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private void drawText(float x, float y, String text, boolean center) {
