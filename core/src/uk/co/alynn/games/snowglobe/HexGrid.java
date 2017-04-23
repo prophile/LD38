@@ -114,6 +114,6 @@ public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
     }
 
     public static int locToColumn(double x, double y) {
-        return (int)(y + 0.5);
+        return (int)(x + 0.5);
     }
 }
