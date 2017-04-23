@@ -9,20 +9,35 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class Snowglobe extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-	
+	private GameMode gameMode = new InitialGameMode();
+
+	public void setGameMode(GameMode newGameMode) {
+		if (newGameMode == gameMode) {
+			return;
+		}
+		GameMode oldGameMode = gameMode;
+		newGameMode.preActivate();
+		oldGameMode.preDeactivate();
+		gameMode = newGameMode;
+		newGameMode.postActivate();
+		oldGameMode.postDeactivate();
+	}
+
 	@Override
 	public void create () {
 		Overlord.init();
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+
+		// set up initial game mode
+		gameMode.preActivate();
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		double dt = Gdx.graphics.getDeltaTime();
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+
+		gameMode.tick(dt);
+		gameMode.render();
 	}
 }
