@@ -1,5 +1,7 @@
 package uk.co.alynn.games.snowglobe;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -49,9 +51,11 @@ public class MainGameMode extends AbstractGameMode {
                 Tile tile = new Tile();
                 if (i == 2 && j == 1) {
                     tile.owner = Ownership.RED;
+                    tile.value = 5;
                 }
                 if (i == -2 && j == -1) {
                     tile.owner = Ownership.BLUE;
+                    tile.value = 5;
                 }
                 tiles.set(i, j, tile);
             }
@@ -101,10 +105,15 @@ public class MainGameMode extends AbstractGameMode {
                     }
                     break;
             }
-            if (entry.slice == selectedSlice && entry.column == selectedColumn) {
-                renderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-            }
             drawHex(entry.slice, entry.column);
+        }
+        renderer.end();
+
+        renderer.begin(ShapeRenderer.ShapeType.Line);
+        renderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        Gdx.gl.glLineWidth(3.0f);
+        if (tiles.get(selectedSlice, selectedColumn) != null) {
+            drawHexOutline(selectedSlice, selectedColumn);
         }
         renderer.end();
 
@@ -148,10 +157,28 @@ public class MainGameMode extends AbstractGameMode {
     }
 
     private void drawHex(int slice, int column) {
+        emitHex(slice, column, new CoordReceiver() {
+            @Override
+            public void receive(float x1, float y1, float x2, float y2, float xc, float yc) {
+                renderer.triangle(x1, y1, x2, y2, xc, yc);
+            }
+        });
+    }
+
+    private void drawHexOutline(int slice, int column) {
+        emitHex(slice, column, new CoordReceiver() {
+            @Override
+            public void receive(float x1, float y1, float x2, float y2, float xc, float yc) {
+                renderer.line(x1, y1, x2, y2);
+            }
+        });
+    }
+
+    private void emitHex(int slice, int column, CoordReceiver cr) {
         double x = HexGrid.hexToX(slice, column);
         double y = HexGrid.hexToY(slice, column);
 
-        float width = 1.0f;
+        float width = 1.14f;
         float halfWidth = width / 2.0f;
 
         float fx = (float)x;
@@ -160,12 +187,12 @@ public class MainGameMode extends AbstractGameMode {
         float hpxo = halfWidth * 0.5f;
         float hpyo = halfWidth * 0.8660254037844386f;
 
-        renderer.triangle(fx - halfWidth, fy, fx - hpxo, fy + hpyo, fx, fy);
-        renderer.triangle(fx - hpxo, fy + hpyo, fx + hpxo, fy + hpyo, fx, fy);
-        renderer.triangle(fx + hpxo, fy + hpyo, fx + halfWidth, fy, fx, fy);
-        renderer.triangle(fx + halfWidth, fy, fx + hpxo, fy - hpyo, fx, fy);
-        renderer.triangle(fx + hpxo, fy - hpyo, fx - hpxo, fy - hpyo, fx, fy);
-        renderer.triangle(fx - hpxo, fy - hpyo, fx - halfWidth, fy, fx, fy);
+        cr.receive(fx - halfWidth, fy, fx - hpxo, fy + hpyo, fx, fy);
+        cr.receive(fx - hpxo, fy + hpyo, fx + hpxo, fy + hpyo, fx, fy);
+        cr.receive(fx + hpxo, fy + hpyo, fx + halfWidth, fy, fx, fy);
+        cr.receive(fx + halfWidth, fy, fx + hpxo, fy - hpyo, fx, fy);
+        cr.receive(fx + hpxo, fy - hpyo, fx - hpxo, fy - hpyo, fx, fy);
+        cr.receive(fx - hpxo, fy - hpyo, fx - halfWidth, fy, fx, fy);
     }
 
     @Override
@@ -178,5 +205,9 @@ public class MainGameMode extends AbstractGameMode {
     @Override
     public boolean usesCenteredCamera() {
         return false;
+    }
+
+    private interface CoordReceiver {
+        public void receive(float x1, float y1, float x2, float y2, float xc, float yc);
     }
 }
