@@ -110,6 +110,9 @@ public class MainGameMode extends AbstractGameMode {
 
         batch.begin();
         drawText(3.0f, -2.5f, "bees", true);
+        for (HexGrid.Entry<Tile> entry : tiles) {
+            drawText((float)HexGrid.hexToX(entry.slice, entry.column), (float)HexGrid.hexToY(entry.slice, entry.column) - 0.18f, "" + entry.value.value, true);
+        }
         batch.end();
     }
 
