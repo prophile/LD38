@@ -22,4 +22,13 @@ public abstract class Utils {
 
         return k - 1;
     }
+
+    public static void main(String[] args) {
+        double rate = 0.1;
+        Random rng = new Random();
+        for (int i = 0; i < 1000; ++i) {
+            int output = randomPoisson(rate, rng);
+            System.out.println(output);
+        }
+    }
 }
