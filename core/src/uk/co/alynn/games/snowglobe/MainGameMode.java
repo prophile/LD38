@@ -30,7 +30,7 @@ public class MainGameMode extends AbstractGameMode {
     private final double initialFlakeRate = 10.0;
     private final double flakeRateHalfLife = 10.0;
     private final double initialEraseRate = 0.1;
-    private final double eraseRateHalfLife = 100.0;
+    private final double eraseRateHalfLife = -30.0;
     private int allTimeHighFlakes = 0;
     private double time = 0.0;
     private final Random rng = new Random();
