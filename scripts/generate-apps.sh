@@ -6,22 +6,22 @@ mkdir -p distributions/mac
 java -jar jres/packr.jar \
      --platform windows32 \
      --jdk 'jres/win32.zip' \
-     --executable snowglobe \
+     --executable arcticmemories \
      --classpath desktop/build/libs/desktop-1.0.jar \
      --mainclass uk.co.alynn.games.snowglobe.desktop.DesktopLauncher \
      --minimizejre hard \
-     --output distributions/windows/snowglobe
+     --output distributions/windows/arcticmemories
 java -jar jres/packr.jar \
      --platform mac \
      --jdk 'jres/mac64.zip' \
-     --executable Snowglobe \
+     --executable ArcticMemories \
      --classpath desktop/build/libs/desktop-1.0.jar \
      --mainclass uk.co.alynn.games.snowglobe.desktop.DesktopLauncher \
      --minimizejre hard \
-     --output distributions/mac/Snowglobe.app
+     --output distributions/mac/ArcticMemories.app
 pushd distributions/windows
-zip -r ../final/snowglobe-win32.zip snowglobe
+zip -r ../final/arcticmemories-win32.zip arcticmemories
 popd
 pushd distributions/mac
-zip -r ../final/snowglobe-mac.zip Snowglobe.app
+zip -r ../final/arcticmemories-mac.zip ArcticMemories.app
 popd
