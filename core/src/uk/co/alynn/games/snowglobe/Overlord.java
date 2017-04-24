@@ -51,12 +51,11 @@ public class Overlord {
     private void initScreens() {
         TextureLoader.TextureParameter params = new TextureLoader.TextureParameter();
         params.genMipMaps = false;
-        params.minFilter = Texture.TextureFilter.Nearest;
-        params.magFilter = Texture.TextureFilter.Nearest;
+        params.minFilter = Texture.TextureFilter.Linear;
+        params.magFilter = Texture.TextureFilter.Linear;
 
-        assetManager.load("gs_win.png", Texture.class, params);
-        assetManager.load("gs_lose.png", Texture.class, params);
-        assetManager.load("gs_intro.png", Texture.class, params);
+        assetManager.load("am_start.png", Texture.class, params);
+        assetManager.load("am_end.png", Texture.class, params);
     }
 
     private void initFont() {
