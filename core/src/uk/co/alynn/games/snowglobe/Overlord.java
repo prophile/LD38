@@ -44,8 +44,6 @@ public class Overlord {
         params.genMipMaps = true;
         params.minFilter = Texture.TextureFilter.Linear;
         params.magFilter = Texture.TextureFilter.MipMapLinearLinear;
-
-        assetManager.load("badlogic.jpg", Texture.class, params);
     }
 
     private void initScreens() {

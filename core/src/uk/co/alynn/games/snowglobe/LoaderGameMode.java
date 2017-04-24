@@ -16,7 +16,7 @@ public class LoaderGameMode extends AbstractGameMode {
     public void preActivate() {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        logo = new Texture("badlogic.jpg");
+        logo = new Texture("hm.png");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class LoaderGameMode extends AbstractGameMode {
     public void render() {
         batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin();
-        batch.draw(logo, Gdx.graphics.getWidth() / 2.0f - logo.getWidth() / 2.0f, 100);
+        batch.draw(logo, Gdx.graphics.getWidth() / 2.0f - logo.getWidth() / 2.0f, 100, 200, 200);
         batch.end();
 
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
