@@ -212,20 +212,20 @@ public class MainGameMode extends AbstractGameMode {
         return this;
     }
 
-    private int getCubeRand(){
+    private int getCubeRand() {
         // return random number between 1 and gridSize
         // with a preference for values closer to the limits
         int randMax = 0;
-        int result = gridSize -1;
+        int result = gridSize - 1;
         for (int i = 0; i < gridSize; i++) {
             randMax += i * i;
-            }
+        }
         double r = Math.random();
         r = r * randMax;
-        while (r > 0 ){
+        while (r > 0) {
             r -= result * result;
             result -= 1;
-            }
+        }
         return result + 1;
     }
 
