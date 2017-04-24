@@ -33,6 +33,7 @@ public class MainGameMode extends AbstractGameMode {
     private final double eraseRateHalfLife = -30.0;
     private int allTimeHighFlakes = 0;
     private double time = 0.0;
+    private double gameEndTimer = 3.0;
     private final Random rng = new Random();
 
     private Ownership turn = Ownership.RED;
@@ -177,6 +178,20 @@ public class MainGameMode extends AbstractGameMode {
                 int eraseIdx = rng.nextInt(radiusTiles.size());
                 tiles.set(radiusTiles.get(eraseIdx).slice, radiusTiles.get(eraseIdx).column, null);
                 System.err.println("erasing slice " + radiusTiles.get(eraseIdx).slice + " column " + radiusTiles.get(eraseIdx).column);
+            }
+        }
+
+        if (tiles.size() <= 1) {
+            gameEndTimer -= dt;
+            if (gameEndTimer <= 0.0) {
+                return new SingleTextureGameMode("am_end.png", new SingleTextureGameMode.Receiver() {
+                    @Override
+                    public GameMode receive() {
+                        return new MenuGameMode();
+                    }
+                });
+            } else {
+                return this;
             }
         }
 
