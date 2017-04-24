@@ -88,6 +88,14 @@ public class HexGrid<T> implements Iterable<HexGrid.Entry<T>> {
         }
     }
 
+    public int size() {
+        return data.size();
+    }
+
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
+
     public static int distance(int slice1, int column1, int slice2, int column2) {
         return (
             Math.abs(column2 - column1) +
