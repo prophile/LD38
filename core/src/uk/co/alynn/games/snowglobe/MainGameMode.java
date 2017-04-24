@@ -31,9 +31,10 @@ public class MainGameMode extends AbstractGameMode {
     private final double initialFlakeRate = 10.0;
     private final double flakeRateHalfLife = 10.0;
     private final double initialEraseRate = 0.1;
-    private final double eraseRateHalfLife = 100.0;
+    private final double eraseRateHalfLife = -30.0;
     private int allTimeHighFlakes = 0;
     private double time = 0.0;
+    private double gameEndTimer = 3.0;
     private final Random rng = new Random();
 
     private Ownership turn = Ownership.RED;
@@ -132,7 +133,7 @@ public class MainGameMode extends AbstractGameMode {
         renderer.end();
 
         batch.begin();
-        drawText(3.0f, -2.5f, "Top: " + allTimeHighFlakes, true);
+        drawText(3.0f, -2.5f, "Top: " + allTimeHighFlakes + "\n" + (turn == Ownership.RED ? "red" : "blue") + " to move", true);
         for (HexGrid.Entry<Tile> entry : tiles) {
             drawText((float)HexGrid.hexToX(entry.slice, entry.column), (float)HexGrid.hexToY(entry.slice, entry.column) - 0.18f, "" + entry.value.value, true);
         }
@@ -187,6 +188,20 @@ public class MainGameMode extends AbstractGameMode {
             }
         }
 
+        if (tiles.size() <= 1) {
+            gameEndTimer -= dt;
+            if (gameEndTimer <= 0.0) {
+                return new SingleTextureGameMode("am_end.png", new SingleTextureGameMode.Receiver() {
+                    @Override
+                    public GameMode receive() {
+                        return new MenuGameMode();
+                    }
+                });
+            } else {
+                return this;
+            }
+        }
+
         double currentFlakeRate = initialFlakeRate * Math.pow(2.0, -(time / flakeRateHalfLife));
         int numFlakes = Utils.randomPoisson(currentFlakeRate * dt, rng);
         ArrayList<Tile> workingTiles = new ArrayList<Tile>();
@@ -219,20 +234,20 @@ public class MainGameMode extends AbstractGameMode {
         return this;
     }
 
-    private int getCubeRand(){
+    private int getCubeRand() {
         // return random number between 1 and gridSize
         // with a preference for values closer to the limits
         int randMax = 0;
-        int result = gridSize -1;
+        int result = gridSize - 1;
         for (int i = 0; i < gridSize; i++) {
             randMax += i * i;
-            }
+        }
         double r = Math.random();
         r = r * randMax;
-        while (r > 0 ){
+        while (r > 0) {
             r -= result * result;
             result -= 1;
-            }
+        }
         return result + 1;
     }
 
