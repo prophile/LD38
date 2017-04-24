@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		config.width = 1024;
 		config.height = 640;
 
-		config.title = "The Snow Globe";
+		config.title = "Arctic Memories";
 		config.vSyncEnabled = true;
 		config.resizable = true;
 
