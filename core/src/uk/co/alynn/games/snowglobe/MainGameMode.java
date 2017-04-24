@@ -52,7 +52,7 @@ public class MainGameMode extends AbstractGameMode {
         batch = new SpriteBatch();
         tiles = new HexGrid<Tile>();
         initGrid();
-        particles = new SnowParticles(10000, 3.0f, 20.0f);
+        particles = new SnowParticles(10000, 8.0f, 2.0f);
     }
 
     private void initGrid() {

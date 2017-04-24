@@ -1,5 +1,6 @@
 package uk.co.alynn.games.snowglobe;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.Random;
@@ -21,7 +22,7 @@ public final class SnowParticles {
             decayRates[i] = lifetime / rng.nextFloat();
             radii[i] = (float)Math.exp(rng.nextGaussian() + Math.log(radius));
             phases[i] = 2.0f * (float)Math.PI * rng.nextFloat();
-            angularVelocities[i] = 1.0f / radii[i] + (float)Math.exp(rng.nextGaussian());
+            angularVelocities[i] = 0.5f / radii[i] + (float)Math.exp(rng.nextGaussian());
         }
     }
 
@@ -33,6 +34,7 @@ public final class SnowParticles {
             float radius = radii[i];
             float x = radius * (float)Math.cos(angle);
             float y = radius * (float)Math.sin(angle);
+
             renderer.point(x, y, 0.0f);
         }
     }
