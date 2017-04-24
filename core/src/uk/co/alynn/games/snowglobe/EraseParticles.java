@@ -1,17 +1,19 @@
 package uk.co.alynn.games.snowglobe;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.Random;
 
-public final class SnowParticles {
+public final class EraseParticles {
     private final float[] decayRates;
     private final float[] radii;
     private final float[] phases;
     private final float[] angularVelocities;
 
-    public SnowParticles(int nParticles, float radius, float lifetime) {
+    public EraseParticles(int nParticles, float radius, float lifetime) {
         decayRates = new float[nParticles];
         radii = new float[nParticles];
         phases = new float[nParticles];
@@ -22,20 +24,23 @@ public final class SnowParticles {
             decayRates[i] = lifetime / rng.nextFloat();
             radii[i] = (float)Math.exp(rng.nextGaussian() + Math.log(radius));
             phases[i] = 2.0f * (float)Math.PI * rng.nextFloat();
-            angularVelocities[i] = 0.5f / radii[i] + (float)Math.exp(rng.nextGaussian());
+            angularVelocities[i] = 3f / radii[i] + (float)Math.exp(rng.nextGaussian());
         }
     }
 
-    public void render(ShapeRenderer renderer, double time) {
+    public void render(SpriteBatch spriteBatch, double time) {
         for (int i = 0; i < decayRates.length; ++i) {
-            float alpha = (float)Math.exp(-time / decayRates[i]);
-            renderer.setColor(1.0f, 1.0f, 1.0f, alpha);
+            float alpha = (float) Math.exp(-time / decayRates[i]);
             float angle = phases[i] + decayRates[i] * angularVelocities[i] * alpha;
             float radius = radii[i];
-            float x = radius * (float)Math.cos(angle);
-            float y = radius * (float)Math.sin(angle);
+            float x = radius * (float) Math.cos(angle);
+            float y = radius * (float) Math.sin(angle);
+            float rot = (float)Math.toDegrees(radius + alpha);
 
-            renderer.point(x, y, 0.0f);
+
+            spriteBatch.draw(Overlord.s_instance.assetManager.get("eraser.png", Texture.class), x, y, 0.1f, 0.1f, 0.3f, 0.3f, 2, 2, rot, 0, 0, 256, 256, false, false
+            );
+
         }
     }
 }

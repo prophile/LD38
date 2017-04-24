@@ -44,6 +44,8 @@ public class Overlord {
         params.genMipMaps = true;
         params.minFilter = Texture.TextureFilter.Linear;
         params.magFilter = Texture.TextureFilter.MipMapLinearLinear;
+
+        assetManager.load("eraser.png", Texture.class, params);
     }
 
     private void initScreens() {
