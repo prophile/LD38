@@ -46,6 +46,7 @@ public class Overlord {
         params.magFilter = Texture.TextureFilter.MipMapLinearLinear;
 
         assetManager.load("badlogic.jpg", Texture.class, params);
+        assetManager.load("eraser.png", Texture.class, params);
     }
 
     private void initScreens() {

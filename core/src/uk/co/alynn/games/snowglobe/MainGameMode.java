@@ -21,6 +21,7 @@ public class MainGameMode extends AbstractGameMode {
     private SpriteBatch batch;
     private HexGrid<Tile> tiles;
     private SnowParticles particles;
+    private EraseParticles erasicles;
 
     private int selectedSlice = -100, selectedColumn = -100;
     private OrthographicCamera orthographicCamera;
@@ -53,6 +54,7 @@ public class MainGameMode extends AbstractGameMode {
         tiles = new HexGrid<Tile>();
         initGrid();
         particles = new SnowParticles(10000, 8.0f, 2.0f);
+        erasicles = new EraseParticles(30, 5.0f, 4.0f);
     }
 
     private void initGrid() {
@@ -141,6 +143,11 @@ public class MainGameMode extends AbstractGameMode {
         renderer.begin(ShapeRenderer.ShapeType.Point);
         particles.render(renderer, time);
         renderer.end();
+
+        batch.setTransformMatrix(IDENTITY4);
+        batch.begin();
+        erasicles.render(batch, time);
+        batch.end();
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
