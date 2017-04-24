@@ -160,7 +160,7 @@ public class MainGameMode extends AbstractGameMode {
     public GameMode tick(double dt) {
         // generate and distribute erased tiles and new flakes
         time += dt;
-        double currentEraseRate = initialEraseRate + Math.pow(2.0, -(time/ eraseRateHalfLife));
+        double currentEraseRate = initialEraseRate * Math.pow(2.0, -(time/ eraseRateHalfLife));
         int numErase = Utils.randomPoisson(currentEraseRate * dt, rng);
         for (int i = 0; i < numErase; i++) {
             // determine tile radius where tile is to be erased,
