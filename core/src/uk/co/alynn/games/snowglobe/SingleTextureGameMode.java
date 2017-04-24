@@ -40,13 +40,19 @@ public class SingleTextureGameMode extends AbstractGameMode {
 
     @Override
     public void render() {
+        batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin();
-        batch.draw(texture, 0.0f, 0.0f, 1024.0f, 640.0f);
+        batch.draw(texture, -512.0f, -320.0f, 1024.0f, 640.0f);
         batch.end();
     }
 
     @Override
     public void click(float x, float y) {
         nextMode = receiver.receive();
+    }
+
+    @Override
+    public boolean usesCenteredCamera() {
+        return false;
     }
 }
