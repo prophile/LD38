@@ -372,10 +372,11 @@ public class MainGameMode extends AbstractGameMode {
         List<HexGrid.Entry<Tile>> candidateSources = new ArrayList<HexGrid.Entry<Tile>>();
         for (HexGrid.Entry<Tile> entry : tiles) {
             if (entry.value.owner == player) {
-                candidateSources.add(entry);
+                for (int i = 0; i < entry.value.value + 1; ++i) {
+                    candidateSources.add(entry);
+                }
             }
         }
-
 
         boolean isPreparedToTransfer = rng.nextDouble() < 0.3;
 
