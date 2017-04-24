@@ -29,8 +29,8 @@ public class MainGameMode extends AbstractGameMode {
     private final int gridSize = 4;
     private final double initialFlakeRate = 10.0;
     private final double flakeRateHalfLife = 10.0;
-    private final double initialEraseRate = 2.0;
-    private final double eraseRateHalfLife = 10.0;
+    private final double initialEraseRate = 0.1;
+    private final double eraseRateHalfLife = 100.0;
     private int allTimeHighFlakes = 0;
     private double time = 0.0;
     private final Random rng = new Random();
@@ -160,7 +160,7 @@ public class MainGameMode extends AbstractGameMode {
     public GameMode tick(double dt) {
         // generate and distribute erased tiles and new flakes
         time += dt;
-        double currentEraseRate = initialEraseRate + Math.pow(2.0, -(time/ eraseRateHalfLife));
+        double currentEraseRate = initialEraseRate * Math.pow(2.0, -(time/ eraseRateHalfLife));
         int numErase = Utils.randomPoisson(currentEraseRate * dt, rng);
         for (int i = 0; i < numErase; i++) {
             // determine tile radius where tile is to be erased,
@@ -372,10 +372,11 @@ public class MainGameMode extends AbstractGameMode {
         List<HexGrid.Entry<Tile>> candidateSources = new ArrayList<HexGrid.Entry<Tile>>();
         for (HexGrid.Entry<Tile> entry : tiles) {
             if (entry.value.owner == player) {
-                candidateSources.add(entry);
+                for (int i = 0; i < entry.value.value + 1; ++i) {
+                    candidateSources.add(entry);
+                }
             }
         }
-
 
         boolean isPreparedToTransfer = rng.nextDouble() < 0.3;
 
